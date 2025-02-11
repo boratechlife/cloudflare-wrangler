@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen p-6" id="app">
+    <div class="max-w-2xl mx-auto" hx-get="/api/bookings/{{id}}" hx-trigger="load" hx-swap="innerHTML">
+        <div class="animate-pulse">
+            <div class="bg-gray-800 rounded-lg shadow-xl p-6">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-4"></div>
+                    <div class="h-8 bg-gray-700 rounded w-3/4 mx-auto"></div>
+                </div>
+                <div class="space-y-4">
+                    <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+                    <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+                    <div class="h-4 bg-gray-700 rounded w-2/3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

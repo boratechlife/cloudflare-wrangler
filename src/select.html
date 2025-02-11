@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+</head>
+
+<body class="bg-gray-900 text-black min-h-screen p-6" id="app">
+    <div class="max-w-2xl mx-auto" hx-get="/api/select/{{id}}" hx-trigger="load" hx-swap="innerHTML">
+        <div class="animate-pulse">
+            <div class="bg-gray-800 rounded-lg shadow-xl p-6">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-4"></div>
+                    <div class="h-8 bg-gray-700 rounded w-3/4 mx-auto"></div>
+                </div>
+                <div class="space-y-4">
+                    <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+                    <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+                    <div class="h-4 bg-gray-700 rounded w-2/3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script defer>
+        function updateTotal() {
+            const selectedRoomOptions = document.getElementById('selected_room_option').value.split(',');
+            let total = 0;
+
+            selectedRoomOptions.forEach(roomId => {
+                const selectedRoom = document.querySelector(`[data-room-id="${roomId}"]`);
+                const selectedRoomInput = selectedRoom.querySelector('input[type="number"]');
+                const price = parseInt(selectedRoomInput.getAttribute('data-room-price'));
+                const quantity = parseInt(selectedRoomInput.value);
+                total += price * quantity;
+            });
+
+            // Add 18% GST
+            const totalWithTax = total * 1.18;
+            const bookingAmount = Math.min(totalWithTax * 0.2, 1000); // 20% or 1000, whichever is lower
+
+            document.getElementById('total-amount').textContent =
+                `Rs. ${totalWithTax.toLocaleString('en-IN')} incl taxes`;
+            document.getElementById('booking-amount').textContent =
+                `Rs. ${bookingAmount.toLocaleString('en-IN')} only`;
+        }
+
+        document.querySelectorAll('.room-option').forEach(option => {
+            option.addEventListener('click', function () {
+                this.classList.toggle('border-blue-500');
+                this.classList.toggle('selected-option');
+
+                const selectedRooms = Array.from(document.querySelectorAll('.selected-option'))
+                    .map(opt => opt.getAttribute('data-room-id'))
+                    .join(',');
+
+                document.getElementById('selected_room_option').value = selectedRooms;
+
+                updateTotal();
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -43,7 +43,8 @@ enabled = true
 [[d1_databases]]
 binding = "DB"
 database_name = "booking-database1"
-database_id = "f6249ac5-3a8f-4fb1-b538-d6ac01858ce4"
+database_id = "353237f7-35e1-4555-952e-30f3469b95d7"
+migrations_dir = "migrations"
 
 [site]
 bucket = "./public" # Directory containing static files

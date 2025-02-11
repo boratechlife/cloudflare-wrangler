@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,10 +14,12 @@
             --background-color: #222;
             --text-color: #fff;
         }
+
         body {
             background-color: var(--background-color);
             color: var(--text-color);
         }
+
         .placeholder {
             color: #ccc;
             font-size: 0.75rem;
@@ -25,6 +28,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous">
 </head>
+
 <body class="flex justify-center items-center h-screen">
     <div class="bg-gray-800 p-4 rounded-lg shadow-lg w-full md:w-2/3 lg:w-1/2 xl:w-1/3 2xl:w-1/4 sm:p-6">
         <h1 class="text-3xl font-bold mb-4 text-center">Book your Kumbh Mela Stay</h1>
@@ -32,12 +36,15 @@
             <div class="mb-4 flex flex-col sm:flex-row justify-between">
                 <div class="w-full sm:w-1/2 mr-0 sm:mr-2 relative mb-4 sm:mb-0">
                     <label for="date-range" class="block text-xs font-medium mb-2">Date Range:</label>
-                    <input type="text" id="date-range" class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500" readonly placeholder="Select date range" style="font-size: 0.75rem;">
+                    <input type="text" id="date-range"
+                        class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                        readonly placeholder="Select date range" style="font-size: 0.75rem;">
                     <i class="fas fa-calendar absolute top-1/2 transform -translate-y-1/2 right-3 text-gray-400"></i>
                 </div>
                 <div class="w-full sm:w-1/2">
                     <label for="booking-type" class="block text-xs font-medium mb-2">Booking Type:</label>
-                    <select id="booking-type" class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500">
+                    <select id="booking-type"
+                        class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500">
                         <option value="" class="placeholder" style="font-size: 0.75rem;">Select booking type</option>
                         <option value="daily" style="font-size: 0.75rem;">Daily</option>
                         <option value="night-only" style="font-size: 0.75rem;">Night Only</option>
@@ -48,7 +55,8 @@
             <div class="mb-4 flex flex-col sm:flex-row justify-between">
                 <div class="w-full sm:w-1/2 mr-0 sm:mr-2 mb-4 sm:mb-0">
                     <label for="room-type" class="block text-xs font-medium mb-2">Room Type:</label>
-                    <select id="room-type" class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500">
+                    <select id="room-type"
+                        class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500">
                         <option value="" class="placeholder" style="font-size: 0.75rem;">Select room type</option>
                         <option value="single" style="font-size: 0.75rem;">Single</option>
                         <option value="double" style="font-size: 0.75rem;">Double</option>
@@ -57,34 +65,45 @@
                 </div>
                 <div class="w-full sm:w-1/2">
                     <label for="adults" class="block text-xs font-medium mb-2">No. of Adults:</label>
-                    <input type="number" id="adults" class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500" min="1" max="10" value="1" placeholder="Enter No. of adults" style="font-size: 0.75rem;">
+                    <input type="number" id="adults"
+                        class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                        min="1" max="10" value="1" placeholder="Enter No. of adults" style="font-size: 0.75rem;">
                 </div>
             </div>
             <div class="mb-4 flex flex-col sm:flex-row justify-between">
                 <div class="w-full sm:w-1/2 mr-0 sm:mr-2 mb-4 sm:mb-0">
                     <label for="children" class="block text-xs font-medium mb-2">No. of Children:</label>
-                    <input type="number" id="children" class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500" min="0" max="10" value="0" placeholder="Enter No. of children" style="font-size: 0.75rem;">
+                    <input type="number" id="children"
+                        class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                        min="0" max="10" value="0" placeholder="Enter No. of children" style="font-size: 0.75rem;">
                 </div>
                 <div class="w-full sm:w-1/2">
                     <label for="nights" class="block text-xs font-medium mb-2">No. of Nights/Hours:</label>
-                    <input type="number" id="nights" class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500" min="1" max="30" value="1" placeholder="Enter No. of nights/hours" style="font-size: 0.75rem;">
+                    <input type="number" id="nights"
+                        class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                        min="1" max="30" value="1" placeholder="Enter No. of nights/hours" style="font-size: 0.75rem;">
                 </div>
             </div>
             <div class="mb-4 flex flex-col sm:flex-row justify-between">
                 <div class="w-full sm:w-1/2 mr-0 sm:mr-2 mb-4 sm:mb-0">
                     <label for="first-name" class="block text-xs font-medium mb-2">First Name:</label>
-                    <input type="text" id="first-name" class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500" placeholder="Enter first name" style="font-size: 0.75rem;">
+                    <input type="text" id="first-name"
+                        class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                        placeholder="Enter first name" style="font-size: 0.75rem;">
                 </div>
                 <div class="w-full sm:w-1/2">
                     <label for="last-name" class="block text-xs font-medium mb-2">Last Name:</label>
-                    <input type="text" id="last-name" class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500" placeholder="Enter last name" style="font-size: 0.75rem;">
+                    <input type="text" id="last-name"
+                        class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                        placeholder="Enter last name" style="font-size: 0.75rem;">
                 </div>
             </div>
             <div class="mb-4 flex flex-col sm:flex-row justify-between">
                 <div class="w-full sm:w-1/2 mr-0 sm:mr-2 mb-4 sm:mb-0 relative">
                     <label for="phone" class="block text-xs font-medium mb-2">Phone Number:</label>
                     <div class="flex">
-                        <select id="country-code" class="block w-20 p-2 pl-2 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500">
+                        <select id="country-code"
+                            class="block w-20 p-2 pl-2 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500">
                             <option value="+1" style="font-size: 0.75rem;">+1 (USA)</option>
                             <option value="+91" style="font-size: 0.75rem;">+91 (India)</option>
                             <option value="+44" style="font-size: 0.75rem;">+44 (UK)</option>
@@ -120,7 +139,8 @@
                             <option value="+385" style="font-size: 0.75rem;">+385 (Croatia)</option>
                             <option value="+386" style="font-size: 0.75rem;">+386 (Slovenia)</option>
                             <option value="+387" style="font-size: 0.75rem;">+387 (Bosnia and Herzegovina)</option>
-                            <option value="+388" style="font-size: 0.75rem;">+388 (European Telecommunications Standards Institute)</option>
+                            <option value="+388" style="font-size: 0.75rem;">+388 (European Telecommunications Standards
+                                Institute)</option>
                             <option value="+389" style="font-size: 0.75rem;">+389 (North Macedonia)</option>
                             <option value="+420" style="font-size: 0.75rem;">+420 (Czech Republic)</option>
                             <option value="+421" style="font-size: 0.75rem;">+421 (Slovakia)</option>
@@ -139,7 +159,7 @@
                             <option value="+52" style="font-size: 0.75rem;">+52 (Mexico)</option>
                             <option value="+53" style="font-size: 0.75rem;">+53 (Cuba)</option>
                             <option value="+54" style="font-size: 0.75remoption>
-                            <option value="+55" style="font-size: 0.75rem;">+55 (Brazil)</option>
+                            <option value=" +55" style="font-size: 0.75rem;">+55 (Brazil)</option>
                             <option value="+56" style="font-size: 0.75rem;">+56 (Chile)</option>
                             <option value="+57" style="font-size: 0.75rem;">+57 (Colombia)</option>
                             <option value="+58" style="font-size: 0.75rem;">+58 (Venezuela)</option>
@@ -197,18 +217,27 @@
                             <option value="+875" style="font-size: 0.75rem;">+875 (Inmarsat)</option>
                             <option value="+876" style="font-size: 0.75rem;">+876 (Inmarsat)</option>
                             <option value="+877" style="font-size: 0.75rem;">+877 (Inmarsat)</option>
-                            <option value="+878" style="font-size: 0.75rem;">+878 (Universal Personal Telecommunications)</option>
-                            <option value="+879" style="font-size: 0.75rem;">+879 (International Telecommunications Public Correspondoption>
+                            <option value="+878" style="font-size: 0.75rem;">+878 (Universal Personal
+                                Telecommunications)</option>
+                            <option value="+879" style="font-size: 0.75rem;">+879 (International Telecommunications
+                                Public Correspondoption>
                         </select>
-                        <input type="tel" id="phone-number" class="block w-full p-2 pl-2 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500" pattern="[0-9]{3}[-\s]?[0-9]{3}[-\s]?[0-9]{4}" placeholder="Enter phone number" style="font-size: 0.75rem;">
+                        <input type="tel" id="phone-number"
+                            class="block w-full p-2 pl-2 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                            pattern="[0-9]{3}[-\s]?[0-9]{3}[-\s]?[0-9]{4}" placeholder="Enter phone number"
+                            style="font-size: 0.75rem;">
                     </div>
                 </div>
                 <div class="w-full sm:w-1/2">
                     <label for="email" class="block text-xs font-medium mb-2">Email:</label>
-                    <input type="email" id="email" class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500" placeholder="Enter email" style="font-size: 0.75rem;">
+                    <input type="email" id="email"
+                        class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                        placeholder="Enter email" style="font-size: 0.75rem;">
                 </div>
             </div>
-            <button type="submit" class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-4 px-8 rounded-lg text-2xl w-full sm:w-1/2 mx-auto">Book Now</button>
+            <button type="submit"
+                class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-4 px-8 rounded-lg text-2xl w-full sm:w-1/2 mx-auto">Book
+                Now</button>
         </form>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -217,28 +246,54 @@
             mode: "range",
             dateFormat: "Y-m-d"
         });
+
+        // Handle validation responses
+        document.body.addEventListener('htmx:afterRequest', function (evt) {
+            if (evt.detail.path === '/validate') {
+                const response = JSON.parse(evt.detail.xhr.response);
+                const targetId = evt.detail.elt.id;
+                const errorDiv = document.getElementById(targetId + '-error');
+                const input = document.getElementById(targetId);
+
+                if (response.success) {
+                    errorDiv.textContent = '';
+                    input.classList.add('validation-success');
+                    input.classList.remove('validation-error');
+                } else {
+                    errorDiv.textContent = response.message;
+                    input.classList.add('validation-error');
+                    input.classList.remove('validation-success');
+                }
+            }
+        });
     </script>
     <style>
         @media (max-width: 768px) {
             .sm\:w-1\/2 {
                 width: 45%;
             }
+
             .sm\:w-1\/4 {
                 width: 20%;
             }
+
             .sm\:p-6 {
                 padding: 1rem;
             }
+
             .sm\:mr-2 {
                 margin-right: 0.5rem;
             }
+
             .sm\:mb-4 {
                 margin-bottom: 1rem;
             }
+
             .sm\:text-xs {
                 font-size: 0.75rem;
             }
         }
     </style>
 </body>
+
 </html>
