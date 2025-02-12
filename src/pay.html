@@ -1,74 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Confirm Booking</title>
-		<script src="https://cdn.tailwindcss.com"></script>
-		<script src="https://unpkg.com/htmx.org"></script>
-	</head>
 
-	<body class="bg-gray-100 m-0 p-0 font-sans">
-		<div class="max-w-md mx-auto my-5 bg-white rounded-lg shadow-md overflow-hidden">
-			<!-- Header -->
-			<div class="bg-blue-600 text-white p-4 flex items-center">
-				<a href="#" class="text-white mr-4">&lt;</a>
-				<span class="text-lg">Confirm your booking</span>
-			</div>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Confirm Booking</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://unpkg.com/htmx.org"></script>
+</head>
 
-			<!-- Steps -->
-			<div class="bg-gray-50 border-b">
-				<div class="max-w-4xl mx-auto px-4 py-4">
-					<div class="flex justify-between items-center">
-						<div class="flex items-center">
-							<span class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">1</span>
-							<span class="ml-2 text-blue-600 font-medium">Search</span>
-						</div>
-						<div class="flex-1 mx-4 border-t-2 border-blue-600"></div>
-						<div class="flex items-center">
-							<span class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">2</span>
-							<span class="ml-2 text-blue-600 font-medium">Select</span>
-						</div>
-						<div class="flex-1 mx-4 border-t-2 border-blue-600"></div>
-						<div class="flex items-center">
-							<span class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">3</span>
-							<span class="ml-2 text-blue-600 font-medium">Confirm</span>
-						</div>
-						<div class="flex-1 mx-4 border-t-2 border-gray-200"></div>
-						<div class="flex items-center opacity-50">
-							<span class="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm">4</span>
-							<span class="ml-2 text-gray-600">Pay</span>
-						</div>
-						<div class="flex-1 mx-4 border-t-2 border-gray-200"></div>
-						<div class="flex items-center opacity-50">
-							<span class="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm">5</span>
-							<span class="ml-2 text-gray-600">Done</span>
-						</div>
+<body class="bg-gray-100 m-0 p-0 font-sans">
+	<div class="max-w-md mx-auto my-5 bg-white rounded-lg shadow-md overflow-hidden">
+		<!-- Header -->
+		<div class="bg-blue-600 text-white p-4 flex items-center">
+			<a href="#" class="text-white mr-4">&lt;</a>
+			<span class="text-lg">Confirm your booking</span>
+		</div>
+
+		<!-- Steps -->
+		<div class="bg-gray-50 border-b">
+			<div class="max-w-4xl mx-auto px-4 py-4">
+				<div class="flex justify-between items-center">
+					<div class="flex items-center">
+						<span
+							class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">1</span>
+						<span class="ml-2 text-blue-600 font-medium">Search</span>
+					</div>
+					<div class="flex-1 mx-4 border-t-2 border-blue-600"></div>
+					<div class="flex items-center">
+						<span
+							class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">2</span>
+						<span class="ml-2 text-blue-600 font-medium">Select</span>
+					</div>
+					<div class="flex-1 mx-4 border-t-2 border-blue-600"></div>
+					<div class="flex items-center">
+						<span
+							class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">3</span>
+						<span class="ml-2 text-blue-600 font-medium">Confirm</span>
+					</div>
+					<div class="flex-1 mx-4 border-t-2 border-gray-200"></div>
+					<div class="flex items-center opacity-50">
+						<span
+							class="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm">4</span>
+						<span class="ml-2 text-gray-600">Pay</span>
+					</div>
+					<div class="flex-1 mx-4 border-t-2 border-gray-200"></div>
+					<div class="flex items-center opacity-50">
+						<span
+							class="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm">5</span>
+						<span class="ml-2 text-gray-600">Done</span>
 					</div>
 				</div>
-			</div>
-
-			<div class="max-w-2xl mx-auto" hx-get="/api/pay-summary/{{id}}" hx-trigger="load" hx-swap="innerHTML">
-				<div class="animate-pulse">
-					<div class="bg-gray-800 rounded-lg shadow-xl p-6">
-						<div class="text-center mb-8">
-							<div class="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-4"></div>
-							<div class="h-8 bg-gray-700 rounded w-3/4 mx-auto"></div>
-						</div>
-						<div class="space-y-4">
-							<div class="h-4 bg-gray-700 rounded w-1/2"></div>
-							<div class="h-4 bg-gray-700 rounded w-3/4"></div>
-							<div class="h-4 bg-gray-700 rounded w-2/3"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Contact Info -->
-			<div class="bg-gray-50 p-4 text-center text-sm">
-				<p class="mb-1">Contact Us: +91 123 456 7890</p>
-				<p>Email: reservations@sangaminternationalhotel.com</p>
 			</div>
 		</div>
-	</body>
+
+
+
+		<div class="max-w-2xl mx-auto" hx-get="/api/pay-summary/{{id}}" hx-trigger="load" hx-swap="innerHTML">
+			<div class="animate-pulse">
+				<div class="bg-gray-800 rounded-lg shadow-xl p-6">
+					<div class="text-center mb-8">
+						<div class="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-4"></div>
+						<div class="h-8 bg-gray-700 rounded w-3/4 mx-auto"></div>
+					</div>
+					<div class="space-y-4">
+						<div class="h-4 bg-gray-700 rounded w-1/2"></div>
+						<div class="h-4 bg-gray-700 rounded w-3/4"></div>
+						<div class="h-4 bg-gray-700 rounded w-2/3"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- Contact Info -->
+		<div class="bg-gray-50 p-4 text-center text-sm">
+			<p class="mb-1">Contact Us: +91 123 456 7890</p>
+			<p>Email: reservations@sangaminternationalhotel.com</p>
+		</div>
+	</div>
+
+	<script src="https://js.stripe.com/v3/"></script>
+
+
+</body>
+
 </html>

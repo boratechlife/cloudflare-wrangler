@@ -76,14 +76,19 @@ CREATE TABLE Bookings (
   selected_rooms TEXT, -- JSON stored as TEXT
   total_amount DECIMAL(10,2),
   tax_amount DECIMAL(10,2),
-  addon_ids TEXT,      -- JSON stored as TEXT
+  addon_ids TEXT,      -- JSON stored as TEXT,
+  payment_id  INTEGER,
+  payment_status TEXT CHECK(payment_status IN ('Pending', 'Paid', 'Failed')),
   status TEXT CHECK(status IN ('Pending', 'Confirmed', 'Cancelled')),
   created_at INTEGER DEFAULT (unixepoch()),
   FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
   FOREIGN KEY (hotel_id) REFERENCES Hotels(hotel_id) ON DELETE CASCADE,
   FOREIGN KEY (room_id) REFERENCES Rooms(room_id) ON DELETE CASCADE,
-  FOREIGN KEY (hotel_room_id) REFERENCES HotelRooms(id) ON DELETE CASCADE
+  FOREIGN KEY (hotel_room_id) REFERENCES HotelRooms(id) ON DELETE CASCADE,
+  FOREIGN KEY (payment_id) REFERENCES Payments(payment_id) ON DELETE CASCADE
+
 );
+
 
 -- Create Inventory table
 CREATE TABLE Inventory (

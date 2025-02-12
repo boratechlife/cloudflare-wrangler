@@ -4,9 +4,15 @@ import startHTML from './start.html';
 import selectHtml from './select.html';
 import confirmHTML from './confirm.html';
 import payHtml from './pay.html';
+import Stripe from 'stripe';
+
+
 
 export default {
 	async fetch(request: Request, env: any, ctx: ExecutionContext): Promise<Response> {
+		const stripe = new Stripe(env.STRIPE_SECRET_KEY || '', {
+			apiVersion: '2023-10-16'
+		  });
 		const url = new URL(request.url);
 
 		// Serve the HTML widget
@@ -77,6 +83,57 @@ export default {
 						headers: { 'Content-Type': 'text/html' },
 					}
 				);
+			}
+		}
+
+
+		// process payments
+
+		if (url.pathname === '/api/process-payment') {
+			try {
+				const formData = await request.formData();
+				const paymentMethodId = formData.get('payment_method');
+				const amount = formData.get('amount');
+				const upi_id = formData.get('upi_id');
+				const bank = formData.get('bank');
+			 // Add validation for amount, upi_id, bank, and paymentMethodId
+				if (!amount || !upi_id || !bank || !paymentMethodId) {
+					return new Response('<div>Invalid payment details!</div>', {
+						headers: { 'Content-Type': 'text/html' },
+						status: 400,
+					});
+				}
+				console.log('Payment Data:', Object.fromEntries(formData.entries()));
+				// Create a PaymentIntent with the order amount and currency
+				const paymentIntent = await stripe.paymentIntents.create({
+					amount: parseInt(amount), // Amount in cents
+					currency: 'usd',
+					payment_method: paymentMethodId,
+				//	confirmation_method: 'manual',
+					confirm: true,
+					automatic_payment_methods: {
+						enabled: true,
+						allow_redirects: 'never', // Disable redirect-based payment methods
+					},
+				});
+		
+				if (paymentIntent.status === 'succeeded') {
+					return new Response('<div>Payment succeeded!</div>', {
+						headers: { 'Content-Type': 'text/html' },
+					});
+				} else {
+					return new Response('<div>Payment failed!</div>', {
+						headers: { 'Content-Type': 'text/html' },
+						status: 400,
+					});
+				}
+			} catch (error) {
+
+				console.log('Payment Error:', error);
+				return new Response('<div>Payment processing error!</div>', {
+					headers: { 'Content-Type': 'text/html' },
+					status: 500,
+				});
 			}
 		}
 
@@ -512,67 +569,145 @@ export default {
 				const roomDetails = await env.DB.prepare(roomNameQuery).bind(booking.room_id).first();
 				const roomName = roomDetails?.room_type || 'Not selected';
 				const htmlResponse = `
-					<div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden p-8">
-						<div class="summary mb-8">
-							<h2 class="text-2xl font-bold mb-4">Booking Summary</h2>
-							<p class="text-gray-700 mb-2">Hotel: Sangam International Hotel</p>
-							<p class="text-gray-700 mb-2">Dates: ${startDate} - ${endDate}</p>
-							<p class="text-gray-700 mb-2">Total amount: ₹${booking.total_amount?.toFixed(2)} incl taxes</p>
-						</div>
+									<form id="payment-form" class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden p-8" hx-post="/api/process-payment">
+										<div class="summary mb-8">
+											<h2 class="text-2xl font-bold mb-4">Booking Summary</h2>
+											<p class="text-gray-700 mb-2">Hotel: Sangam International Hotel</p>
+											<p class="text-gray-700 mb-2">Dates: ${startDate} - ${endDate}</p>
+											<p class="text-gray-700 mb-2">Total amount: ₹${booking.total_amount?.toFixed(2)} incl taxes</p>
+										</div>
 
-						<div class="payment-options space-y-6">
-							<div class="mb-4">
-								<label for="amount" class="block text-gray-700 mb-2">Enter booking amount</label>
-								<input type="text" id="amount" placeholder="₹1000 or above" 
-									class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-							</div>
+										<div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"></div>
 
-							<div class="option bg-gray-50 p-4 rounded-lg">
-								<h3 class="font-semibold mb-3">UPI</h3>
-								<input type="text" placeholder="Enter UPI ID" 
-									class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-							</div>
+										<div class="payment-options space-y-6">
+											<div class="mb-4">
+												<label for="amount" class="block text-gray-700 mb-2">Enter booking amount <span class="text-red-500">*</span></label>
+												<input type="text" id="amount" name="amount" required placeholder="₹1000 or above" 
+													class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+											</div>
 
-							<div class="option bg-gray-50 p-4 rounded-lg">
-								<h3 class="font-semibold mb-3">Netbanking</h3>
-								<div class="space-y-2">
-									<label class="flex items-center">
-										<input type="radio" name="bank" class="mr-2"> 
-										<span>Bank of India</span>
-									</label>
-									<label class="flex items-center">
-										<input type="radio" name="bank" class="mr-2">
-										<span>HDFC Bank</span>
-									</label>
-									<label class="flex items-center">
-										<input type="radio" name="bank" class="mr-2">
-										<span>ICICI Bank</span>
-									</label>
-								</div>
-							</div>
+											<div class="option bg-gray-50 p-4 rounded-lg">
+												<h3 class="font-semibold mb-3">UPI <span class="text-red-500">*</span></h3>
+												<input type="text" name="upi_id" id="upi_id" required placeholder="Enter UPI ID" 
+													class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+											</div>
 
-							<div class="option bg-gray-50 p-4 rounded-lg">
-								<h3 class="font-semibold mb-3">Card</h3>
-								<div class="space-y-4">
-									<input type="text" placeholder="Card Number" 
-										class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-									<input type="text" placeholder="Card Holder Name"
-										class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-									<div class="card-details grid grid-cols-2 gap-4">
-										<input type="text" placeholder="MM/YY"
-											class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-										<input type="text" placeholder="CVV"
-											class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-									</div>
-								</div>
-							</div>
+											<div class="option bg-gray-50 p-4 rounded-lg">
+												<h3 class="font-semibold mb-3">Netbanking <span class="text-red-500">*</span></h3>
+												<div class="space-y-2">
+													<label class="flex items-center">
+														<input type="radio" name="bank" required value="boi" class="mr-2"> 
+														<span>Bank of India</span>
+													</label>
+													<label class="flex items-center">
+														<input type="radio" name="bank" value="hdfc" class="mr-2">
+														<span>HDFC Bank</span>
+													</label>
+													<label class="flex items-center">
+														<input type="radio" name="bank" value="icici" class="mr-2">
+														<span>ICICI Bank</span>
+													</label>
+												</div>
+											</div>
 
-							<button class="pay-button w-full bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium text-lg">
-								Pay Now
-							</button>
-						</div>
-					</div>
-				`;
+											<div class="option bg-white p-4 rounded-lg">
+												<h3 class="font-semibold mb-3">Card <span class="text-red-500">*</span></h3>
+												<div class="option bg-gray-50 p-4 rounded-lg">
+													<div class="space-y-4" id="card-element">
+														<!-- Stripe Card Element will be inserted here -->
+													</div>
+													<div id="card-errors" role="alert" class="mt-2 text-red-600 text-sm"></div>
+												</div>
+											</div>
+
+											<button type="submit" id="submit-button" class="pay-button w-full bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+												Pay Now
+											</button>
+										</div>
+
+										<script defer>
+											var stripe = Stripe('pk_test_51QrFohHTfndAmLprq4IxdsHUgNaJ7Og504rJZZGmbf88W8zGXMLwfw7kWEpwPZnpHvklOFHmLpwfLlVCrzhwWcWK00SPcmDDNz');
+											var elements = stripe.elements();
+											var cardElement = elements.create('card');
+											var submitButton = document.getElementById('submit-button');
+											var errorDiv = document.getElementById('error-message');
+											var isSubmitting = false;
+
+											cardElement.mount('#card-element');
+
+											cardElement.on('change', function (event) {
+												var displayError = document.getElementById('card-errors');
+												if (event.error) {
+													displayError.textContent = event.error.message;
+												} else {
+													displayError.textContent = '';
+												}
+											});
+
+											function validateForm(formData) {
+												const amount = formData.get('amount');
+												const upiId = formData.get('upi_id');
+												const bank = formData.get('bank');
+
+												if (!amount || isNaN(amount) || parseFloat(amount) < 1000) {
+													return 'Please enter a valid amount (minimum ₹1000)';
+												}
+												if (!upiId || !upiId.includes('@')) {
+													return 'Please enter a valid UPI ID';
+												}
+												if (!bank) {
+													return 'Please select a bank';
+												}
+												return null;
+											}
+
+											function showError(message) {
+												errorDiv.textContent = message;
+												errorDiv.classList.remove('hidden');
+												submitButton.disabled = false;
+												isSubmitting = false;
+											}
+
+											var form = document.getElementById('payment-form');
+											form.addEventListener('submit', async function (event) {
+												event.preventDefault();
+												if (isSubmitting) return;
+
+												errorDiv.classList.add('hidden');
+												submitButton.disabled = true;
+												isSubmitting = true;
+
+												var formData = new FormData(form);
+												const validationError = validateForm(formData);
+												
+												if (validationError) {
+													showError(validationError);
+													return;
+												}
+
+												try {
+													const { paymentMethod, error } = await stripe.createPaymentMethod({
+														type: 'card',
+														card: cardElement,
+													});
+
+													if (error) {
+														showError(error.message);
+														return;
+													}
+
+													formData.append('payment_method', paymentMethod.id);
+													await htmx.ajax('POST', '/api/process-payment', {
+														values: Object.fromEntries(formData),
+														swap: 'innerHTML'
+													});
+												} catch (error) {
+													showError('Payment processing failed. Please try again.');
+												}
+											});
+										</script>
+									</form>
+								`;
 
 				return new Response(htmlResponse, {
 					headers: { 'Content-Type': 'text/html' },

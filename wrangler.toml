@@ -49,3 +49,7 @@ migrations_dir = "migrations"
 [site]
 bucket = "./public" # Directory containing static files
 
+[vars]
+STRIPE_SECRET_KEY = "sk_test_51QrFohHTfndAmLprtnntTJO8XtZ8ZdywLKJIl7wRChpqPlC1DlkXadD2DMthhPyd7RDiPLDRboOzPjhRTdPTlrYQ00ZFaGAvoj"
+STRIPE_PUBLISHABLE_KEY = "pk_test_51QrFohHTfndAmLprq4IxdsHUgNaJ7Og504rJZZGmbf88W8zGXMLwfw7kWEpwPZnpHvklOFHmLpwfLlVCrzhwWcWK00SPcmDDNz"
+
