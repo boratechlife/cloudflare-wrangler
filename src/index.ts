@@ -87,19 +87,42 @@ export default {
 				const formData = await request.formData();
 				const data = Object.fromEntries(formData.entries());
 				console.log('post update data', formData);
+				// OBTAAIN ADDONS INTO ARRAY  SINCE IT LOOKS LIKE THIS `  'addons[]' => '1',  'addons[]' => '2',  'addons[]' => '3'`
+				const addons = formData.getAll('addons[]');
+				
+			// query the addons table to get the price of each addon and add them to the total amount
+				interface Addon {
+					addon_id: number;
+					price: number;
+				}
+				const placeholders = addons.map(() => '?').join(',');
+				const addonQuery = `SELECT * FROM Addons WHERE addon_id IN (${placeholders})`;
+				const addonPrices = await env.DB.prepare(addonQuery).bind(...addons.map(Number)).all();
+				const totalAddonPrice = (addonPrices.results as Addon[]).reduce((total: number, addon: Addon) => total + addon.price, 0);
+				console.log('Total Addon Price:', totalAddonPrice);
+
 				// Update booking in database
 				const updateQuery = `
-		UPDATE Bookings 
-		SET booking_type = ?,
-			start_date = ?,
-			end_date = ?,
-			room_id = ?
-		WHERE booking_id = ?
-	  `;
+				UPDATE Bookings 
+				SET booking_type = ?,
+					start_date = ?,
+					end_date = ?,
+					room_id = ?,
+					total_amount =  ?
+				WHERE booking_id = ?
+				`;
 
 				await env.DB.prepare(updateQuery)
-					.bind(data.booking_type, data.start_date, data.end_date, parseInt(data.room_type as string), bookingId)
+					.bind(
+						data.booking_type, 
+						data.start_date, 
+						data.end_date, 
+						parseInt(data.room_type as string),
+						totalAddonPrice, // Add the total addon price to existing total_amount
+						bookingId
+					)
 					.run();
+		
 
 				// Return the updated booking view
 				const bookingQuery = `SELECT * FROM Bookings WHERE booking_id = ?`;
@@ -138,6 +161,13 @@ export default {
 				// Get hotels from HotelRooms Table
 				const hotelQuery = `SELECT * FROM HotelRooms`;
 				const hotels = await env.DB.prepare(hotelQuery).all();
+				// GET BOOKING  total_amount from booking table
+				const bookingQuery = `SELECT * FROM Bookings WHERE booking_id = ?`;
+				const booking = await env.DB.prepare(bookingQuery).bind(bookingId).first();
+				const total_amount = booking.total_amount;
+				 console.log('Booking:', JSON.stringify(booking, null, 2));
+				// console.log('All Hotels:', JSON.stringify(hotels, null, 2));
+
 				console.log('All Hotels:', JSON.stringify(hotels, null, 2));
 
 				const htmlResponse = `
@@ -181,6 +211,8 @@ export default {
 					</div>
 				</div>
 
+				<input type="hidden" name="addons_total" id="addons_total" value="${total_amount}">
+
 				<!-- Room Options -->
 				<div class="p-6 space-y-6">
 					${hotels.results
@@ -218,9 +250,9 @@ export default {
 								<p class="text-gray-600 text-sm mt-3">
 									Luxurious accommodation with modern amenities.<br>120 sq ft | Air Conditioning | Free WiFi
 								</p>
-								<div class="mt-4 flex items-center">
+									<div class="mt-4 flex items-center">
 									<label class="text-sm text-gray-600 mr-3">Quantity:</label>
-									<input type="number" name="room_quantity_${hotel.id}" value="1" min="0"
+									<input type="number" name="room_quantity_${hotel.id}" value="0" min="0"
 										class="w-20 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all" 
 										data-room-price="${hotel.base_price_per_night}" />
 								</div>
@@ -240,12 +272,20 @@ export default {
 				<div class="bg-gray-50 p-6 border-t border-gray-200">
 					<div class="max-w-md mx-auto">
 						<div class="flex justify-between mb-3">
-							<span class="text-gray-600">Total amount</span>
-							<span id="total-amount-display" class="font-semibold">₹0</span>
+							<span class="text-gray-600">Room total</span>
+							<span id="room-total-display" class="font-semibold">₹0</span>
+						</div>
+						<div class="flex justify-between mb-3">
+							<span class="text-gray-600">Addons total</span>
+							<span id="addons-total-display" class="font-semibold">₹${total_amount}</span>
 						</div>
 						<div class="flex justify-between mb-4">
 							<span class="text-gray-600">Tax amount (18%)</span>
 							<span id="tax-amount-display" class="font-semibold">₹0</span>
+						</div>
+						<div class="flex justify-between mb-4 pt-2 border-t">
+							<span class="text-gray-800 font-semibold">Final total</span>
+							<span id="final-total-display" class="font-bold text-blue-600">₹0</span>
 						</div>
 						<button type="submit"
 							class="w-full bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium text-lg shadow-md hover:shadow-lg">
@@ -265,7 +305,8 @@ export default {
 			<script>
 				function updateSelection() {
 					const selectedRooms = [];
-					let totalAmount = 0;
+					let roomTotal = 0;
+					const addonsTotal = parseFloat(document.getElementById('addons_total').value) || 0;
 					
 					document.querySelectorAll('.room-option').forEach(option => {
 						const roomId = option.dataset.roomId;
@@ -274,18 +315,22 @@ export default {
 						
 						if (quantity > 0) {
 							selectedRooms.push({ roomId, quantity });
-							totalAmount += price * quantity;
+							roomTotal += price * quantity;
 						}
 					});
 
-					const taxAmount = totalAmount * 0.18;
+					const subtotal = roomTotal + addonsTotal;
+					const taxAmount = subtotal * 0.18;
+					const finalTotal = subtotal + taxAmount;
 					
 					document.getElementById('selected_rooms').value = JSON.stringify(selectedRooms);
-					document.getElementById('total_amount').value = totalAmount;
+					document.getElementById('total_amount').value = finalTotal;
 					document.getElementById('tax_amount').value = taxAmount;
 					
-					document.getElementById('total-amount-display').textContent = '₹' + totalAmount.toFixed(2);
+					document.getElementById('room-total-display').textContent = '₹' + roomTotal.toFixed(2);
+					document.getElementById('addons-total-display').textContent = '₹' + addonsTotal.toFixed(2);
 					document.getElementById('tax-amount-display').textContent = '₹' + taxAmount.toFixed(2);
+					document.getElementById('final-total-display').textContent = '₹' + finalTotal.toFixed(2);
 				}
 
 				document.querySelectorAll('input[type="number"]').forEach(input => {
@@ -575,12 +620,18 @@ export default {
 				const roomQuery = `SELECT * FROM Rooms WHERE room_id = ?`;
 				const room = await env.DB.prepare(roomQuery).bind(booking.room_id).first();
 
-				console.log('User Details:', JSON.stringify(user, null, 2));
-				console.log('Hotel Details:', JSON.stringify(hotel, null, 2));
+				// get all addons from Addons table
+				const addonQuery = `SELECT * FROM Addons`;
+				const allAddons = await env.DB.prepare(addonQuery).all();
 
-				console.log('Room Details:', JSON.stringify(room, null, 2));
 
-				console.log('Single Booking:', JSON.stringify(booking, null, 2));
+				// console.log('User Details:', JSON.stringify(user, null, 2));
+				// console.log('Hotel Details:', JSON.stringify(hotel, null, 2));
+
+				// console.log('Room Details:', JSON.stringify(room, null, 2));
+
+				// console.log('Single Booking:', JSON.stringify(booking, null, 2));
+				console.log('All Addons:', JSON.stringify(allAddons, null, 2));
 
 				if (!booking) {
 					return new Response('Booking not found', { status: 404 });
@@ -658,30 +709,24 @@ export default {
 									</div>
 
 									<!-- Additional Options -->
-									<div class="mt-8">
-										<h3 class="text-lg font-semibold text-gray-800 mb-4">Additional Services</h3>
-										<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-											<label class="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-												<input type="checkbox" name="breakfast" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-												<span class="ml-3 text-gray-700">Breakfast Included</span>
-											</label>
-											
-											<label class="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-												<input type="checkbox" name="sightseeing" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-												<span class="ml-3 text-gray-700">1 Day Sightseeing</span>
-											</label>
-											
-											<label class="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-												<input type="checkbox" name="pickup" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-												<span class="ml-3 text-gray-700">Airport Pickup</span>
-											</label>
-											
-											<label class="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-												<input type="checkbox" name="dinner" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-												<span class="ml-3 text-gray-700">Dinner Included</span>
-											</label>
+				<div class="mt-8">
+							<h3 class="text-lg font-semibold text-gray-800 mb-4">Additional Services</h3>
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+								${allAddons.results.map(addon => `
+									<label class="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+										<input type="checkbox" 
+											   name="addons[]" 
+											   class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+											   value="${addon.addon_id}">
+										<div class="ml-3">
+											<span class="text-gray-700">${addon.name}</span>
+											<p class="text-sm text-gray-500">${addon.description}</p>
+											<span class="text-sm font-medium text-blue-600">₹${addon.price}</span>
 										</div>
-									</div>
+									</label>
+								`).join('')}
+							</div>
+						</div>
 
 									<!-- Guest Information -->
 									<div class="mt-8 p-6 bg-gray-50 rounded-lg">

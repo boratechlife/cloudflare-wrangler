@@ -76,6 +76,7 @@ CREATE TABLE Bookings (
   selected_rooms TEXT, -- JSON stored as TEXT
   total_amount DECIMAL(10,2),
   tax_amount DECIMAL(10,2),
+  addon_ids TEXT,      -- JSON stored as TEXT
   status TEXT CHECK(status IN ('Pending', 'Confirmed', 'Cancelled')),
   created_at INTEGER DEFAULT (unixepoch()),
   FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
