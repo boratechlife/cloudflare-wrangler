@@ -96,36 +96,139 @@ export default {
 				const amount = formData.get('amount');
 				const upi_id = formData.get('upi_id');
 				const bank = formData.get('bank');
+			 // get selected_payment_method
+				const selectedPaymentMethod = formData.get('selected_payment_method');
+				console.log('Payment Data:', Object.fromEntries(formData.entries()));
 			 // Add validation for amount, upi_id, bank, and paymentMethodId
-				if (!amount || !upi_id || !bank || !paymentMethodId) {
-					return new Response('<div>Invalid payment details!</div>', {
+				if (!amount) {
+					return new Response('<div>Amount is required!</div>', {
 						headers: { 'Content-Type': 'text/html' },
 						status: 400,
 					});
 				}
-				console.log('Payment Data:', Object.fromEntries(formData.entries()));
-				// Create a PaymentIntent with the order amount and currency
-				const paymentIntent = await stripe.paymentIntents.create({
-					amount: parseInt(amount), // Amount in cents
-					currency: 'usd',
-					payment_method: paymentMethodId,
-				//	confirmation_method: 'manual',
-					confirm: true,
-					automatic_payment_methods: {
-						enabled: true,
-						allow_redirects: 'never', // Disable redirect-based payment methods
-					},
-				});
-		
-				if (paymentIntent.status === 'succeeded') {
-					return new Response('<div>Payment succeeded!</div>', {
-						headers: { 'Content-Type': 'text/html' },
-					});
-				} else {
-					return new Response('<div>Payment failed!</div>', {
+
+				if (selectedPaymentMethod === 'upi' && !upi_id) {
+					return new Response('<div>UPI ID is required!</div>', {
 						headers: { 'Content-Type': 'text/html' },
 						status: 400,
 					});
+				}
+
+				if (selectedPaymentMethod === 'netbanking' && !bank) {
+					return new Response('<div>Bank selection is required!</div>', {
+						headers: { 'Content-Type': 'text/html' },
+						status: 400,
+					});
+				}
+
+				if (selectedPaymentMethod === 'card' && !paymentMethodId) {
+					return new Response('<div>Card details are required!</div>', {
+						headers: { 'Content-Type': 'text/html' },
+						status: 400,
+					});
+				}
+			
+				if (selectedPaymentMethod === 'card') {
+					// Create a PaymentIntent with the order amount and currency
+					const paymentIntent = await stripe.paymentIntents.create({
+						amount: parseInt(amount as string), // Amount in cents
+						currency: 'usd',
+						payment_method: paymentMethodId,
+						confirm: true,
+						automatic_payment_methods: {
+							enabled: true,
+							allow_redirects: 'never', // Disable redirect-based payment methods
+						},
+					});
+
+					if (paymentIntent.status === 'succeeded') {
+						// Insert payment record
+						const paymentInsertQuery = `
+							INSERT INTO Payments (booking_id, amount, currency, payment_method, transaction_id, payment_date)
+							VALUES (?, ?, ?, ?, ?, unixepoch())
+						`;
+						await env.DB.prepare(paymentInsertQuery)
+							.bind(
+								formData.get('booking_id'),
+								parseInt(amount as string),
+								'USD',
+								'Credit Card', 
+								paymentIntent.id,
+							)
+							.run();
+
+						// Get the payment ID
+						const lastPaymentQuery = `SELECT last_insert_rowid() as id`;
+						const lastPayment = await env.DB.prepare(lastPaymentQuery).first();
+
+						// Update booking with payment ID and status
+						const updateBookingQuery = `
+							UPDATE Bookings 
+							SET payment_id = ?, payment_status = 'Paid'
+							WHERE booking_id = ?
+						`;
+						await env.DB.prepare(updateBookingQuery)
+							.bind(lastPayment.id, formData.get('booking_id'))
+							.run();
+						return new Response('<div>Payment succeeded!</div>', {
+							headers: { 'Content-Type': 'text/html' },
+						});
+					} else {
+						return new Response('<div>Payment failed!</div>', {
+							headers: { 'Content-Type': 'text/html' },
+							status: 400,
+						});
+					}
+				} else if (selectedPaymentMethod === 'upi') {
+					// Handle UPI payment
+					// Insert UPI payment record
+					// for now return no support yet
+					return new Response('<div>UPI payment not supported yet!</div>', {
+						headers: { 'Content-Type': 'text/html' },
+					});
+
+
+					// const paymentInsertQuery = `
+					// 	INSERT INTO Payments (booking_id, amount, currency, payment_method, upi_id, payment_date)
+					// 	VALUES (?, ?, ?, ?, ?, unixepoch())
+					// `;
+					// await env.DB.prepare(paymentInsertQuery)
+					// 	.bind(
+					// 		formData.get('booking_id'),
+					// 		parseInt(amount as string),
+					// 		'INR',
+					// 		'UPI',
+					// 		upi_id
+					// 	)
+					// 	.run();
+					// return new Response('<div>UPI payment initiated!</div>', {
+					// 	headers: { 'Content-Type': 'text/html' },
+					// });
+				} else if (selectedPaymentMethod === 'netbanking') {
+					// Handle netbanking payment
+					// Insert netbanking payment record
+
+					return new Response('<div>UPI payment not supported yet!</div>', {
+						headers: { 'Content-Type': 'text/html' },
+					});
+
+
+					// const paymentInsertQuery = `
+					// 	INSERT INTO Payments (booking_id, amount, currency, payment_method, bank_name, payment_date)
+					// 	VALUES (?, ?, ?, ?, ?, unixepoch())
+					// `;
+					// await env.DB.prepare(paymentInsertQuery)
+					// 	.bind(
+					// 		formData.get('booking_id'),
+					// 		parseInt(amount as string),
+					// 		'INR',
+					// 		'Netbanking',
+					// 		bank
+					// 	)
+					// 	.run();
+					// return new Response('<div>Netbanking payment initiated!</div>', {
+					// 	headers: { 'Content-Type': 'text/html' },
+					// });
 				}
 			} catch (error) {
 
@@ -569,7 +672,7 @@ export default {
 				const roomDetails = await env.DB.prepare(roomNameQuery).bind(booking.room_id).first();
 				const roomName = roomDetails?.room_type || 'Not selected';
 				const htmlResponse = `
-									<form id="payment-form" class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden p-8" hx-post="/api/process-payment">
+									<form id="payment-form" class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden p-8">
 										<div class="summary mb-8">
 											<h2 class="text-2xl font-bold mb-4">Booking Summary</h2>
 											<p class="text-gray-700 mb-2">Hotel: Sangam International Hotel</p>
@@ -586,42 +689,63 @@ export default {
 													class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 											</div>
 
-											<div class="option bg-gray-50 p-4 rounded-lg">
-												<h3 class="font-semibold mb-3">UPI <span class="text-red-500">*</span></h3>
-												<input type="text" name="upi_id" id="upi_id" required placeholder="Enter UPI ID" 
-													class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-											</div>
-
-											<div class="option bg-gray-50 p-4 rounded-lg">
-												<h3 class="font-semibold mb-3">Netbanking <span class="text-red-500">*</span></h3>
+											<div class="mb-6">
+												<h3 class="font-semibold mb-3">Select Payment Method <span class="text-red-500">*</span></h3>
 												<div class="space-y-2">
 													<label class="flex items-center">
-														<input type="radio" name="bank" required value="boi" class="mr-2"> 
-														<span>Bank of India</span>
+														<input type="radio" name="payment_method" value="upi" class="mr-2" onchange="togglePaymentMethod('upi')"> 
+														<span>UPI</span>
 													</label>
 													<label class="flex items-center">
-														<input type="radio" name="bank" value="hdfc" class="mr-2">
-														<span>HDFC Bank</span>
+														<input type="radio" name="payment_method" value="netbanking" class="mr-2" onchange="togglePaymentMethod('netbanking')">
+														<span>Netbanking</span>
 													</label>
 													<label class="flex items-center">
-														<input type="radio" name="bank" value="icici" class="mr-2">
-														<span>ICICI Bank</span>
+														<input type="radio" name="payment_method" value="card" class="mr-2" onchange="togglePaymentMethod('card')">
+														<span>Credit/Debit Card</span>
 													</label>
 												</div>
 											</div>
 
-											<div class="option bg-white p-4 rounded-lg">
-												<h3 class="font-semibold mb-3">Card <span class="text-red-500">*</span></h3>
+											<div id="upi-section" class="payment-section hidden">
 												<div class="option bg-gray-50 p-4 rounded-lg">
-													<div class="space-y-4" id="card-element">
-														<!-- Stripe Card Element will be inserted here -->
-													</div>
-													<div id="card-errors" role="alert" class="mt-2 text-red-600 text-sm"></div>
+													<h3 class="font-semibold mb-3">UPI Details</h3>
+													<input type="text" name="upi_id" id="upi_id" placeholder="Enter UPI ID" 
+														class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 												</div>
 											</div>
 
-											<button type="submit" id="submit-button" class="pay-button w-full bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed">
-												Pay Now
+											<div id="netbanking-section" class="payment-section hidden">
+												<div class="option bg-gray-50 p-4 rounded-lg">
+													<h3 class="font-semibold mb-3">Select Bank</h3>
+													<div class="space-y-2">
+														<label class="flex items-center">
+															<input type="radio" name="bank" value="boi" class="mr-2"> 
+															<span>Bank of India</span>
+														</label>
+														<label class="flex items-center">
+															<input type="radio" name="bank" value="hdfc" class="mr-2">
+															<span>HDFC Bank</span>
+														</label>
+													</div>
+												</div>
+											</div>
+								
+											<div id="card-section" class="payment-section hidden">
+												<div class="option bg-gray-50 p-4 rounded-lg">
+													<h3 class="font-semibold mb-3">Card Details</h3>
+													<div id="card-element" class="p-3 border border-gray-300 rounded-lg"></div>
+													<div id="card-errors" class="text-red-500 text-sm mt-2"></div>
+												</div>
+											</div>
+
+											<!-- Hidden input for booking_id -->
+											<input type="hidden" name="booking_id" value="${booking.booking_id}">
+											<input type="hidden" name="selected_payment_method" id="selected_payment_method">
+
+											<!-- Submit Button -->
+											<button id="submit-button" type="submit" class="w-full bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium text-lg shadow-md hover:shadow-lg">
+												Process Payment
 											</button>
 										</div>
 
@@ -633,7 +757,17 @@ export default {
 											var errorDiv = document.getElementById('error-message');
 											var isSubmitting = false;
 
-											cardElement.mount('#card-element');
+											function togglePaymentMethod(method) {
+												document.getElementById('selected_payment_method').value = method;
+												document.querySelectorAll('.payment-section').forEach(function(section) {
+													section.classList.add('hidden');
+												});
+												var sectionId = method + '-section';
+												document.getElementById(sectionId).classList.remove('hidden');
+												if (method === 'card') {
+													cardElement.mount('#card-element');
+												}
+											}
 
 											cardElement.on('change', function (event) {
 												var displayError = document.getElementById('card-errors');
@@ -646,17 +780,32 @@ export default {
 
 											function validateForm(formData) {
 												const amount = formData.get('amount');
-												const upiId = formData.get('upi_id');
-												const bank = formData.get('bank');
+												const paymentMethod = formData.get('selected_payment_method');
 
 												if (!amount || isNaN(amount) || parseFloat(amount) < 1000) {
 													return 'Please enter a valid amount (minimum ₹1000)';
 												}
-												if (!upiId || !upiId.includes('@')) {
-													return 'Please enter a valid UPI ID';
+
+												if (!paymentMethod) {
+													return 'Please select a payment method';
 												}
-												if (!bank) {
-													return 'Please select a bank';
+
+												switch (paymentMethod) {
+													case 'upi':
+														const upiId = formData.get('upi_id');
+														if (!upiId || !upiId.includes('@')) {
+															return 'Please enter a valid UPI ID';
+														}
+														break;
+													case 'netbanking':
+														const bank = formData.get('bank');
+														if (!bank) {
+															return 'Please select a bank';
+														}
+														break;
+													case 'card':
+														// Card validation is handled by Stripe
+														break;
 												}
 												return null;
 											}
@@ -686,17 +835,21 @@ export default {
 												}
 
 												try {
-													const { paymentMethod, error } = await stripe.createPaymentMethod({
-														type: 'card',
-														card: cardElement,
-													});
+													const paymentMethod = formData.get('selected_payment_method');
+													if (paymentMethod === 'card') {
+														const { paymentMethod: stripePaymentMethod, error } = await stripe.createPaymentMethod({
+															type: 'card',
+															card: cardElement,
+														});
 
-													if (error) {
-														showError(error.message);
-														return;
+														if (error) {
+															showError(error.message);
+															return;
+														}
+
+														formData.append('payment_method', stripePaymentMethod.id);
 													}
 
-													formData.append('payment_method', paymentMethod.id);
 													await htmx.ajax('POST', '/api/process-payment', {
 														values: Object.fromEntries(formData),
 														swap: 'innerHTML'

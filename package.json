@@ -8,7 +8,9 @@
 		"start": "wrangler dev",
 		"test": "vitest",
 		"cf-typegen": "wrangler types",
-		"migrate": "wrangler d1 migrations apply booking-database1"
+		"migrate": "wrangler d1 migrations apply booking-database2",
+		"removeTables": "wrangler d1 execute DB --command \"PRAGMA foreign_keys=OFF; SELECT 'DROP TABLE ' || name || ';' FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';\" --remote",
+		"migrate-remote": "wrangler d1 migrations apply booking-database2 --remote"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.6.4",

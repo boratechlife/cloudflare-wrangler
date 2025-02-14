@@ -42,8 +42,8 @@ enabled = true
 # Add your database configuration here
 [[d1_databases]]
 binding = "DB"
-database_name = "booking-database1"
-database_id = "353237f7-35e1-4555-952e-30f3469b95d7"
+database_name = "booking-database2"
+database_id = "5189acb2-08f6-4283-9d9e-4079defa4503"
 migrations_dir = "migrations"
 
 [site]
