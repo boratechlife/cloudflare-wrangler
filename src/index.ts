@@ -337,11 +337,11 @@ export default {
 				<div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
 					<div class="flex items-center justify-between">
 						<div class="flex items-center">
-							<a href="#" class="text-white mr-4 hover:opacity-75 transition-opacity">
-								<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-								</svg>
-							</a>
+										<a href="#" onclick="history.back(); return false;" class="text-white hover:opacity-75 transition-opacity">
+											<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+											</svg>
+										</a>
 							<h1 class="text-xl font-semibold">Select your Room</h1>
 						</div>
 					</div>
@@ -932,7 +932,8 @@ export default {
 							<div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
 								<div class="flex items-center justify-between">
 									<div class="flex items-center space-x-4">
-										<a href="#" class="text-white hover:opacity-75 transition-opacity">
+									
+										<a href="#" onclick="history.back(); return false;" class="text-white hover:opacity-75 transition-opacity">
 											<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 											</svg>
