@@ -331,176 +331,209 @@ export default {
 				console.log('All Hotels:', JSON.stringify(hotels, null, 2));
 
 				const htmlResponse = `
-		<form hx-post="/api/selected/hotel" method="POST">
-			<div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-				<!-- Header -->
-				<div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
-					<div class="flex items-center justify-between">
-						<div class="flex items-center">
-										<a href="#" onclick="history.back(); return false;" class="text-white hover:opacity-75 transition-opacity">
-											<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-											</svg>
-										</a>
-							<h1 class="text-xl font-semibold">Select your Room</h1>
-						</div>
-					</div>
-				</div>
-				
-				<input type="hidden" name="booking_id" value="${bookingId}">
-
-				<!-- Steps -->
-				<div class="bg-gray-50 border-b">
-					<div class="max-w-4xl mx-auto px-4 py-4">
-						<div class="flex justify-between items-center">
-							<div class="flex items-center">
-								<span class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">1</span>
-								<span class="ml-2 text-blue-600 font-medium">Search</span>
-							</div>
-							<div class="flex-1 mx-4 border-t-2 border-blue-200"></div>
-							<div class="flex items-center">
-								<span class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">2</span>
-								<span class="ml-2 text-blue-600 font-medium">Select</span>
-							</div>
-							<div class="flex-1 mx-4 border-t-2 border-gray-200"></div>
-							<div class="flex items-center opacity-50">
-								<span class="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm">3</span>
-								<span class="ml-2 text-gray-600">Confirm</span>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<input type="hidden" name="addons_total" id="addons_total" value="${total_amount}">
-
-				<!-- Room Options -->
-				<div class="p-6 space-y-6">
-					${hotels.results
-						.map(
-							(hotel) => `
-						<div class="flex border border-gray-200 rounded-xl overflow-hidden room-option hover:shadow-md transition-shadow duration-300" data-room-id="${hotel.id}" data-price="${hotel.base_price_per_night}">
-							<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgfYU86hJHUIgqTO8TCNqOcuHsA9Tpi4WolQ&s" alt="Deluxe Room" class="w-40 h-40 object-cover" />
-							<div class="flex-1 p-5">
-								<div class="flex justify-between items-start">
-									<div>
-										<h3 class="text-lg font-semibold text-gray-800">${hotel.name}</h3>
-										<div class="flex items-center mt-2">
-											<div class="flex text-yellow-400">
-												<svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-													<path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+						<form hx-post="/api/selected/hotel" method="POST">
+							<div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+								<!-- Header -->
+								<div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 sm:p-6">
+									<div class="flex items-center justify-between">
+										<div class="flex items-center space-x-3">
+											<a href="#" onclick="history.back(); return false;" class="text-white hover:opacity-75 transition-opacity">
+												<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 												</svg>
-												<svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-													<path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-												</svg>
-												<svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-													<path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-												</svg>
-												<svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-													<path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-												</svg>
-												<svg class="w-4 h-4 fill-current text-gray-300" viewBox="0 0 20 20">
-													<path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-												</svg>
-											</div>
-											<span class="text-gray-500 text-sm ml-2">4.5</span>
+											</a>
+											<h1 class="text-lg sm:text-xl font-semibold">Select your Room</h1>
 										</div>
 									</div>
-									<p class="text-xl font-bold text-blue-600">₹${hotel.base_price_per_night}</p>
 								</div>
-								<p class="text-gray-600 text-sm mt-3">
-									Luxurious accommodation with modern amenities.<br>120 sq ft | Air Conditioning | Free WiFi
-								</p>
-									<div class="mt-4 flex items-center">
-									<label class="text-sm text-gray-600 mr-3">Quantity:</label>
-									<input type="number" name="room_quantity_${hotel.id}" value="0" min="0"
-										class="w-20 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all" 
-										data-room-price="${hotel.base_price_per_night}" />
+								
+								<input type="hidden" name="booking_id" value="${bookingId}">
+
+								<!-- Steps -->
+								<div class="bg-gray-50 border-b">
+									<div class="max-w-4xl mx-auto px-2 py-3 sm:px-4 sm:py-4">
+										<div class="flex justify-between items-center">
+											<div class="flex flex-col items-center">
+												<span class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs sm:text-sm">1</span>
+												<span class="mt-1 text-blue-600 text-xs sm:text-sm font-medium">Search</span>
+											</div>
+											<div class="flex-1 mx-2 sm:mx-4 border-t-2 border-blue-200"></div>
+											<div class="flex flex-col items-center">
+												<span class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs sm:text-sm">2</span>
+												<span class="mt-1 text-blue-600 text-xs sm:text-sm font-medium">Select</span>
+											</div>
+											<div class="flex-1 mx-2 sm:mx-4 border-t-2 border-gray-200"></div>
+											<div class="flex flex-col items-center opacity-50">
+												<span class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-xs sm:text-sm">3</span>
+												<span class="mt-1 text-gray-600 text-xs sm:text-sm">Confirm</span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<input type="hidden" name="addons_total" id="addons_total" value="${total_amount}">
+
+								<!-- Room Options -->
+								<div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
+									${hotels.results
+										.map(
+											(hotel) => `
+										<div class="flex flex-col sm:flex-row border border-gray-200 rounded-xl overflow-hidden room-option hover:shadow-md transition-shadow duration-300" data-room-id="${hotel.id}" data-price="${hotel.base_price_per_night}">
+											<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgfYU86hJHUIgqTO8TCNqOcuHsA9Tpi4WolQ&s" alt="Deluxe Room" class="w-full sm:w-40 h-48 sm:h-40 object-cover" />
+											<div class="flex-1 p-4 sm:p-5">
+												<div class="flex justify-between items-start">
+													<div>
+														<h3 class="text-lg font-semibold text-gray-800">${hotel.name}</h3>
+														<div class="flex items-center mt-2">
+															<div class="flex text-yellow-400">
+																<svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+																	<path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+																</svg>
+																<svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+																	<path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+																</svg>
+																<svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+																	<path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+																</svg>
+															</div>
+															<span class="text-gray-500 text-sm ml-2">4.5</span>
+														</div>
+													</div>
+													<p class="text-xl font-bold text-blue-600">₹${hotel.base_price_per_night}</p>
+												</div>
+												<div class="mt-3 flex items-center text-sm text-gray-600">
+													<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+													</svg>
+													120 sq ft
+													<svg class="w-4 h-4 ml-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+													</svg>
+													AC
+													<svg class="w-4 h-4 ml-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/>
+													</svg>
+													WiFi
+												</div>
+												<div class="mt-4 flex items-center">
+													<label class="text-sm text-gray-600 mr-3">Quantity:</label>
+													<input type="number" name="room_quantity_${hotel.id}" value="0" min="0"
+														class="w-20 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all" 
+														data-room-price="${hotel.base_price_per_night}" />
+												</div>
+											</div>
+										</div>
+									`
+										)
+										.join('')}
+								</div>
+
+								<!-- Hidden inputs -->
+								<input type="hidden" name="selected_rooms" id="selected_rooms">
+								<input type="hidden" name="total_amount" id="total_amount">
+								<input type="hidden" name="tax_amount" id="tax_amount">
+
+								<!-- Amount Details -->
+								<div class="bg-gray-50 p-4 sm:p-6 border-t border-gray-200">
+									<div class="max-w-md mx-auto space-y-3">
+										<div class="flex justify-between items-center">
+											<span class="text-gray-600 flex items-center">
+												<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+												</svg>
+												Room total
+											</span>
+											<span id="room-total-display" class="font-semibold">₹0</span>
+										</div>
+										<div class="flex justify-between items-center">
+											<span class="text-gray-600 flex items-center">
+												<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+												</svg>
+												Addons total
+											</span>
+											<span id="addons-total-display" class="font-semibold">₹${total_amount}</span>
+										</div>
+										<div class="flex justify-between items-center">
+											<span class="text-gray-600 flex items-center">
+												<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z"/>
+												</svg>
+												Tax amount (18%)
+											</span>
+											<span id="tax-amount-display" class="font-semibold">₹0</span>
+										</div>
+										<div class="flex justify-between items-center pt-3 border-t">
+											<span class="text-gray-800 font-semibold flex items-center">
+												<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+												</svg>
+												Final total
+											</span>
+											<span id="final-total-display" class="font-bold text-blue-600">₹0</span>
+										</div>
+										<button type="submit"
+											class="w-full bg-blue-600 text-white py-3 sm:py-4 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium text-base sm:text-lg shadow-md hover:shadow-lg flex items-center justify-center">
+											<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+											</svg>
+											Confirm Selection
+										</button>
+									</div>
+								</div>
+
+								<!-- Contact Info -->
+								<div class="bg-gray-50 p-4 sm:p-6 text-center border-t border-gray-200">
+									<div class="flex flex-col items-center space-y-2">
+										<svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+										</svg>
+										<p class="text-gray-600">Need help? Contact us</p>
+										<p class="text-blue-600 font-medium">+91 123 456 7890</p>
+										<p class="text-gray-500 text-xs sm:text-sm">reservations@sangaminternationalhotel.com</p>
+									</div>
 								</div>
 							</div>
-						</div>
-					`
-						)
-						.join('')}
-				</div>
 
-				<!-- Hidden inputs for form submission -->
-				<input type="hidden" name="selected_rooms" id="selected_rooms">
-				<input type="hidden" name="total_amount" id="total_amount">
-				<input type="hidden" name="tax_amount" id="tax_amount">
+							<script>
+								function updateSelection() {
+									const selectedRooms = [];
+									let roomTotal = 0;
+									const addonsTotal = parseFloat(document.getElementById('addons_total').value) || 0;
+									
+									document.querySelectorAll('.room-option').forEach(option => {
+										const roomId = option.dataset.roomId;
+										const quantity = parseInt(option.querySelector('input[type="number"]').value);
+										const price = parseFloat(option.dataset.price);
+										
+										if (quantity > 0) {
+											selectedRooms.push({ roomId, quantity });
+											roomTotal += price * quantity;
+										}
+									});
 
-				<!-- Amount Details -->
-				<div class="bg-gray-50 p-6 border-t border-gray-200">
-					<div class="max-w-md mx-auto">
-						<div class="flex justify-between mb-3">
-							<span class="text-gray-600">Room total</span>
-							<span id="room-total-display" class="font-semibold">₹0</span>
-						</div>
-						<div class="flex justify-between mb-3">
-							<span class="text-gray-600">Addons total</span>
-							<span id="addons-total-display" class="font-semibold">₹${total_amount}</span>
-						</div>
-						<div class="flex justify-between mb-4">
-							<span class="text-gray-600">Tax amount (18%)</span>
-							<span id="tax-amount-display" class="font-semibold">₹0</span>
-						</div>
-						<div class="flex justify-between mb-4 pt-2 border-t">
-							<span class="text-gray-800 font-semibold">Final total</span>
-							<span id="final-total-display" class="font-bold text-blue-600">₹0</span>
-						</div>
-						<button type="submit"
-							class="w-full bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium text-lg shadow-md hover:shadow-lg">
-							Confirm Selection
-						</button>
-					</div>
-				</div>
+									const subtotal = roomTotal + addonsTotal;
+									const taxAmount = subtotal * 0.18;
+									const finalTotal = subtotal + taxAmount;
+									
+									document.getElementById('selected_rooms').value = JSON.stringify(selectedRooms);
+									document.getElementById('total_amount').value = finalTotal;
+									document.getElementById('tax_amount').value = taxAmount;
+									
+									document.getElementById('room-total-display').textContent = '₹' + roomTotal.toFixed(2);
+									document.getElementById('addons-total-display').textContent = '₹' + addonsTotal.toFixed(2);
+									document.getElementById('tax-amount-display').textContent = '₹' + taxAmount.toFixed(2);
+									document.getElementById('final-total-display').textContent = '₹' + finalTotal.toFixed(2);
+								}
 
-				<!-- Contact Info -->
-				<div class="bg-gray-50 p-6 text-center border-t border-gray-200">
-					<p class="text-gray-600">Need help? Contact us</p>
-					<p class="text-blue-600 font-medium mt-1">+91 123 456 7890</p>
-					<p class="text-gray-500 text-sm mt-1">reservations@sangaminternationalhotel.com</p>
-				</div>
-			</div>
+								document.querySelectorAll('input[type="number"]').forEach(input => {
+									input.addEventListener('change', updateSelection);
+								});
 
-			<script>
-				function updateSelection() {
-					const selectedRooms = [];
-					let roomTotal = 0;
-					const addonsTotal = parseFloat(document.getElementById('addons_total').value) || 0;
-					
-					document.querySelectorAll('.room-option').forEach(option => {
-						const roomId = option.dataset.roomId;
-						const quantity = parseInt(option.querySelector('input[type="number"]').value);
-						const price = parseFloat(option.dataset.price);
-						
-						if (quantity > 0) {
-							selectedRooms.push({ roomId, quantity });
-							roomTotal += price * quantity;
-						}
-					});
-
-					const subtotal = roomTotal + addonsTotal;
-					const taxAmount = subtotal * 0.18;
-					const finalTotal = subtotal + taxAmount;
-					
-					document.getElementById('selected_rooms').value = JSON.stringify(selectedRooms);
-					document.getElementById('total_amount').value = finalTotal;
-					document.getElementById('tax_amount').value = taxAmount;
-					
-					document.getElementById('room-total-display').textContent = '₹' + roomTotal.toFixed(2);
-					document.getElementById('addons-total-display').textContent = '₹' + addonsTotal.toFixed(2);
-					document.getElementById('tax-amount-display').textContent = '₹' + taxAmount.toFixed(2);
-					document.getElementById('final-total-display').textContent = '₹' + finalTotal.toFixed(2);
-				}
-
-				document.querySelectorAll('input[type="number"]').forEach(input => {
-					input.addEventListener('change', updateSelection);
-				});
-
-				updateSelection();
-			</script>
-		</form>
-	`;
+								updateSelection();
+							</script>
+						</form>
+					`;
 
 				return new Response(htmlResponse, {
 					headers: { 'Content-Type': 'text/html' },
@@ -553,68 +586,68 @@ export default {
 				const roomName = roomDetails?.room_type || 'Not selected';
 
 				const htmlResponse = `
-					<div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+					<div class="w-full lg:max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
 						<!-- Header -->
-						<div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
-							<h2 class="text-2xl font-bold">Booking Summary</h2>
+						<div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 sm:p-6">
+							<h2 class="text-xl sm:text-2xl font-bold">Booking Summary</h2>
 						</div>
 
 						<!-- Booking Details -->
-						<div class="p-8 bg-gray-50 border-b">
+						<div class="p-4 sm:p-8 bg-gray-50 border-b">
 							<div class="space-y-4">
 								<div class="flex items-center">
-									<svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mr-2 sm:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
 									</svg>
 									<div>
-										<p class="text-sm text-gray-500">Hotel</p>
-										<p class="font-semibold">Sangam International Hotel</p>
+										<p class="text-xs sm:text-sm text-gray-500">Hotel</p>
+										<p class="text-sm sm:text-base font-semibold">Sangam International Hotel</p>
 									</div>
 								</div>
 
 								<div class="flex items-center">
-									<svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mr-2 sm:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
 									</svg>
 									<div>
-										<p class="text-sm text-gray-500">Room Type</p>
-										<p class="font-semibold">${`${roomName}`}</p>
+										<p class="text-xs sm:text-sm text-gray-500">Room Type</p>
+										<p class="text-sm sm:text-base font-semibold">${`${roomName}`}</p>
 									</div>
 								</div>
 
 								<div class="flex items-center">
-									<svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mr-2 sm:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
 									</svg>
 									<div>
-										<p class="text-sm text-gray-500">Stay Duration</p>
-										<p class="font-semibold">${startDate} - ${endDate}</p>
+										<p class="text-xs sm:text-sm text-gray-500">Stay Duration</p>
+										<p class="text-sm sm:text-base font-semibold">${startDate} - ${endDate}</p>
 									</div>
 								</div>
 
 								<div class="flex items-center">
-									<svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mr-2 sm:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
 									</svg>
 									<div>
-										<p class="text-sm text-gray-500">Booking Type</p>
-										<p class="font-semibold">${booking.booking_type}</p>
+										<p class="text-xs sm:text-sm text-gray-500">Booking Type</p>
+										<p class="text-sm sm:text-base font-semibold">${booking.booking_type}</p>
 									</div>
 								</div>
 							</div>
 						</div>
 
 						<!-- Amount Details -->
-						<div class="p-8">
-							<h3 class="text-lg font-semibold mb-4">Payment Details</h3>
+						<div class="p-4 sm:p-8">
+							<h3 class="text-base sm:text-lg font-semibold mb-4">Payment Details</h3>
 							<div class="space-y-3">
 								<div class="flex justify-between items-center py-2">
-									<span class="text-gray-600">Total Amount (incl. taxes)</span>
-									<span class="font-semibold">₹${booking.total_amount?.toFixed(2)}</span>
+									<span class="text-sm sm:text-base text-gray-600">Total Amount (incl. taxes)</span>
+									<span class="text-sm sm:text-base font-semibold">₹${booking.total_amount?.toFixed(2)}</span>
 								</div>
 								<div class="flex justify-between items-center py-2 border-t">
-									<span class="text-gray-600">Tax Amount</span>
-									<span class="font-semibold">₹${booking.tax_amount?.toFixed(2)}</span>
+									<span class="text-sm sm:text-base text-gray-600">Tax Amount</span>
+									<span class="text-sm sm:text-base font-semibold">₹${booking.tax_amount?.toFixed(2)}</span>
 								</div>
 							</div>
 						</div>
@@ -925,8 +958,8 @@ export default {
 					return new Response('Booking not found', { status: 404 });
 				}
 				const htmlResponse = `
-				<body class="min-h-screen bg-gray-50 font-sans">
-					<form hx-post="/update/booking/${bookingId}" hx-target="#app" hx-swap="outerHTML" method="POST" class="py-8 px-4">
+				<body class="lg:min-h-screen bg-gray-50 font-sans">
+					<form hx-post="/update/booking/${bookingId}" hx-target="#app" hx-swap="outerHTML" method="POST" class="py-8 w-full px-4">
 						<div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
 							<!-- Header -->
 							<div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
@@ -1038,11 +1071,11 @@ export default {
 								</div>
 
 								<!-- Submit Button -->
-								<div class="mt-8">
-									<button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-6 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-medium text-lg shadow-md hover:shadow-lg">
-										Update Booking
-									</button>
-								</div>
+									<div class="mt-8">
+										<button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-medium text-base sm:text-lg shadow-md hover:shadow-lg">
+											Update Booking
+										</button>
+									</div>
 							</div>
 
 							<!-- Footer -->

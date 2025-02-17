@@ -1,313 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hotel Booking Widget</title>
-		<script src="https://cdn.tailwindcss.com"></script>
-		<script src="https://unpkg.com/htmx.org"></script>
-		<style>
-			/* Add dark theme preference */
-			:root {
-				--primary-color: #333;
-				--secondary-color: #444;
-				--background-color: #222;
-				--text-color: #fff;
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Hotel Booking Widget</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://unpkg.com/htmx.org"></script>
+	<style>
+		/* Add dark theme preference */
+		:root {
+			--primary-color: #333;
+			--secondary-color: #444;
+			--background-color: #222;
+			--text-color: #fff;
+		}
+
+		body {
+			background-color: var(--background-color);
+			color: var(--text-color);
+		}
+
+		.placeholder {
+			color: #ccc;
+			font-size: 0.75rem;
+		}
+
+		.error-message {
+			color: #ff0000;
+			font-size: 0.75rem;
+			margin-top: 0.25rem;
+		}
+	</style>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+	<link rel="stylesheet" href="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous" />
+</head>
+
+<body class="flex justify-center items-center lgh-screen">
+	<div class="bg-gray-800 p-4 rounded-lg shadow-lg w-full  lg:w-1/2 xl:w-1/2 2xl:w-1/2 sm:p-6">
+		<h1 class="text-3xl font-bold mb-4 text-center">Book your Kumbh Mela Stay</h1>
+
+		<form hx-post="/submit" method="POST" id="booking-form" hx-swap="none">
+			<div id="submit-error" class="error-message"></div>
+			<div class="mb-4 flex flex-col sm:flex-row justify-between">
+				<div class="w-full lg:w-1/2 mr-0 sm:mr-2 relative mb-4 sm:mb-0">
+					<label for="date-range" class="block text-xs font-medium mb-2">Date Range:</label>
+					<input type="text" id="date-range" name="date-range"
+						class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+						readonly placeholder="Select date range" hx-post="/validate" hx-trigger="change"
+						hx-sync="closest form:abort" style="font-size: 0.75rem" />
+					<div id="date-range-error" class="error-message"></div>
+				</div>
+				<div class="w-full lg:w-1/2">
+					<label for="booking-type" class="block text-xs font-medium mb-2">Booking Type:</label>
+					<select id="booking-type" name="booking-type" hx-post="/validate" hx-trigger="change"
+						hx-sync="closest form:abort"
+						class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500">
+						<option value="" class="placeholder" style="font-size: 0.75rem">Select booking type</option>
+						<option value="Day" style="font-size: 0.75rem">Daily</option>
+						<option value="Night" style="font-size: 0.75rem">Night Only</option>
+						<option value="Hourly" style="font-size: 0.75rem">Hourly</option>
+					</select>
+					<div id="booking-type-error" class="error-message"></div>
+				</div>
+			</div>
+			<div class="mb-4 flex flex-col sm:flex-row justify-between">
+				<div class="w-full lg:w-1/2 mr-0 sm:mr-2 mb-4 sm:mb-0">
+					<label for="room-type" class="block text-xs font-medium mb-2">Room Type:</label>
+					<select id="room-type" name="room-type" hx-post="/validate" hx-trigger="change"
+						hx-sync="closest form:abort"
+						class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500">
+						<option value="" class="placeholder" style="font-size: 0.75rem">Select room type</option>
+						<option value="single" style="font-size: 0.75rem">Single</option>
+						<option value="double" style="font-size: 0.75rem">Double</option>
+						<option value="suite" style="font-size: 0.75rem">Suite</option>
+					</select>
+					<div id="room-type-error" class="error-message"></div>
+				</div>
+				<div class="w-full lg:w-1/2">
+					<label for="adults" class="block text-xs font-medium mb-2">No. of Adults:</label>
+					<input type="number" id="adults" name="adults" hx-post="/validate" hx-trigger="change"
+						hx-sync="closest form:abort"
+						class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+						min="1" max="10" value="1" placeholder="Enter No. of adults" style="font-size: 0.75rem" />
+					<div id="adults-error" class="error-message"></div>
+				</div>
+			</div>
+			<div class="mb-4 flex flex-col sm:flex-row justify-between">
+				<div class="w-full lg:w-1/2 mr-0 sm:mr-2 mb-4 sm:mb-0">
+					<label for="children" class="block text-xs font-medium mb-2">No. of Children:</label>
+					<input type="number" id="children" name="children" hx-post="/validate" hx-trigger="change"
+						hx-sync="closest form:abort"
+						class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+						min="0" max="10" value="0" placeholder="Enter No. of children" style="font-size: 0.75rem" />
+					<div id="children-error" class="error-message"></div>
+				</div>
+				<div class="w-full lg:w-1/2">
+					<label for="nights" class="block text-xs font-medium mb-2">No. of Nights/Hours:</label>
+					<input type="number" id="nights" name="nights" hx-post="/validate" hx-trigger="change"
+						hx-sync="closest form:abort"
+						class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+						min="1" max="30" value="1" placeholder="Enter No. of nights/hours" style="font-size: 0.75rem" />
+					<div id="nights-error" class="error-message"></div>
+				</div>
+			</div>
+			<div class="mb-4 flex flex-col sm:flex-row justify-between">
+				<div class="w-full lg:w-1/2 mr-0 sm:mr-2 mb-4 sm:mb-0">
+					<label for="first-name" class="block text-xs font-medium mb-2">First Name:</label>
+					<input type="text" id="first-name" name="first-name" hx-post="/validate" hx-trigger="change"
+						hx-sync="closest form:abort"
+						class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+						placeholder="Enter first name" style="font-size: 0.75rem" />
+					<div id="first-name-error" class="error-message"></div>
+				</div>
+				<div class="w-full lg:w-1/2">
+					<label for="last-name" class="block text-xs font-medium mb-2">Last Name:</label>
+					<input type="text" id="last-name" name="last-name" hx-post="/validate" hx-trigger="change"
+						hx-sync="closest form:abort"
+						class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+						placeholder="Enter last name" style="font-size: 0.75rem" />
+					<div id="last-name-error" class="error-message"></div>
+				</div>
+			</div>
+
+			<!-- Phone number with validation -->
+			<div class="mb-4 flex flex-col gap-2 sm:flex-row justify-between">
+				<div class="w-full lg:w-1/2 flex flex-col">
+					<label for="phone-number" class="block text-xs font-medium mb-2">Phone:</label>
+					<div class="flex">
+						<select id="country-code" name="country-cod"
+							class="w-20 p-2 pl-2 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500">
+							<option value="+1" style="font-size: 0.75rem">+1 (USA)</option>
+							<option value="+91" style="font-size: 0.75rem">+91 (India)</option>
+							<option value="+44" style="font-size: 0.75rem">+44 (UK)</option>
+							<option value="+61" style="font-size: 0.75rem">+61 (Australia)</option>
+							<option value="+86" style="font-size: 0.75rem">+86 (China)</option>
+							<option value="+27" style="font-size: 0.75rem">+27 (South Africa)</option>
+							<option value="+33" style="font-size: 0.75rem">+33 (France)</option>
+						</select>
+						<input type="tel" id="phone-number" name="phone-number" hx-post="/validate" hx-trigger="change"
+							hx-sync="closest form:abort"
+							class="flex-1 w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+							pattern="[0-9]{3}[-\s]?[0-9]{3}[-\s]?[0-9]{4}" placeholder="Enter phone number" />
+					</div>
+					<div id="phone-number-error" class="error-message"></div>
+				</div>
+
+				<!-- Email field with validation -->
+				<div class="w-full lg:w-1/2">
+					<label for="email" class="block text-xs font-medium mb-2">Email:</label>
+					<input type="email" id="email" name="email" hx-post="/validate" hx-trigger="change"
+						hx-sync="closest form:abort"
+						class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+						placeholder="Enter email" />
+					<div id="email-error" class="error-message"></div>
+				</div>
+			</div>
+
+			<button type="submit"
+				class="bg-orange-500 w-full hover:bg-orange-700 text-white font-bold py-4 px-8 rounded-lg text-2xl w-full sm:w-full mx-auto">
+				Book Now
+			</button>
+		</form>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script defer>
+		flatpickr('#date-range', {
+			mode: 'range',
+			dateFormat: 'Y-m-d',
+		});
+
+		document.body.addEventListener('htmx:afterRequest', function (evt) {
+			console.log('Yes', evt.detail);
+
+			if (evt.detail.pathInfo.requestPath === '/validate') {
+				const response = JSON.parse(evt.detail.xhr.response);
+				const targetId = evt.detail.elt.id;
+
+				console.log('Confirm', response.message, targetId);
+				const errorDiv = document.getElementById(targetId + '-error');
+				const input = document.getElementById(targetId);
+
+				if (response.success) {
+					errorDiv.textContent = '';
+					input.classList.add('validation-success');
+					input.classList.remove('validation-error');
+				} else {
+					errorDiv.textContent = response.message;
+					input.classList.add('validation-error');
+					input.classList.remove('validation-success');
+				}
+			} else if (evt.detail.pathInfo.requestPath === '/submit') {
+				const response = JSON.parse(evt.detail.xhr.response);
+				console.log('Submit Response:', response);
+
+				if (response.success) {
+					alert('Form submitted successfully!');
+				} else {
+					const submitErrorDiv = document.getElementById('submit-error');
+					submitErrorDiv.textContent = response.message;
+				}
+			}
+		});
+	</script>
+	<style>
+		@media (max-width: 768px) {
+			.sm\:w-1\/2 {
+				width: 45%;
 			}
 
-			body {
-				background-color: var(--background-color);
-				color: var(--text-color);
+			.sm\:w-1\/4 {
+				width: 20%;
 			}
 
-			.placeholder {
-				color: #ccc;
+			.sm\:p-6 {
+				padding: 1rem;
+			}
+
+			.sm\:mr-2 {
+				margin-right: 0.5rem;
+			}
+
+			.sm\:mb-4 {
+				margin-bottom: 1rem;
+			}
+
+			.sm\:text-xs {
 				font-size: 0.75rem;
 			}
+		}
+	</style>
+</body>
 
-			.error-message {
-				color: #ff0000;
-				font-size: 0.75rem;
-				margin-top: 0.25rem;
-			}
-		</style>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
-		<link rel="stylesheet" href="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous" />
-	</head>
-
-	<body class="flex justify-center items-center h-screen">
-		<div class="bg-gray-800 p-4 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/2 xl:w-1/2 2xl:w-1/2 sm:p-6">
-			<h1 class="text-3xl font-bold mb-4 text-center">Book your Kumbh Mela Stay</h1>
-
-			<form hx-post="/submit" method="POST" id="booking-form" hx-swap="none">
-				<div id="submit-error" class="error-message"></div>
-				<div class="mb-4 flex flex-col sm:flex-row justify-between">
-					<div class="w-full sm:w-1/2 mr-0 sm:mr-2 relative mb-4 sm:mb-0">
-						<label for="date-range" class="block text-xs font-medium mb-2">Date Range:</label>
-						<input
-							type="text"
-							id="date-range"
-							name="date-range"
-							class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-							readonly
-							placeholder="Select date range"
-							hx-post="/validate"
-							hx-trigger="change"
-							hx-sync="closest form:abort"
-							style="font-size: 0.75rem"
-						/>
-						<div id="date-range-error" class="error-message"></div>
-					</div>
-					<div class="w-full sm:w-1/2">
-						<label for="booking-type" class="block text-xs font-medium mb-2">Booking Type:</label>
-						<select
-							id="booking-type"
-							name="booking-type"
-							hx-post="/validate"
-							hx-trigger="change"
-							hx-sync="closest form:abort"
-							class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-						>
-							<option value="" class="placeholder" style="font-size: 0.75rem">Select booking type</option>
-							<option value="Day" style="font-size: 0.75rem">Daily</option>
-							<option value="Night" style="font-size: 0.75rem">Night Only</option>
-							<option value="Hourly" style="font-size: 0.75rem">Hourly</option>
-						</select>
-						<div id="booking-type-error" class="error-message"></div>
-					</div>
-				</div>
-				<div class="mb-4 flex flex-col sm:flex-row justify-between">
-					<div class="w-full sm:w-1/2 mr-0 sm:mr-2 mb-4 sm:mb-0">
-						<label for="room-type" class="block text-xs font-medium mb-2">Room Type:</label>
-						<select
-							id="room-type"
-							name="room-type"
-							hx-post="/validate"
-							hx-trigger="change"
-							hx-sync="closest form:abort"
-							class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-						>
-							<option value="" class="placeholder" style="font-size: 0.75rem">Select room type</option>
-							<option value="single" style="font-size: 0.75rem">Single</option>
-							<option value="double" style="font-size: 0.75rem">Double</option>
-							<option value="suite" style="font-size: 0.75rem">Suite</option>
-						</select>
-						<div id="room-type-error" class="error-message"></div>
-					</div>
-					<div class="w-full sm:w-1/2">
-						<label for="adults" class="block text-xs font-medium mb-2">No. of Adults:</label>
-						<input
-							type="number"
-							id="adults"
-							name="adults"
-							hx-post="/validate"
-							hx-trigger="change"
-							hx-sync="closest form:abort"
-							class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-							min="1"
-							max="10"
-							value="1"
-							placeholder="Enter No. of adults"
-							style="font-size: 0.75rem"
-						/>
-						<div id="adults-error" class="error-message"></div>
-					</div>
-				</div>
-				<div class="mb-4 flex flex-col sm:flex-row justify-between">
-					<div class="w-full sm:w-1/2 mr-0 sm:mr-2 mb-4 sm:mb-0">
-						<label for="children" class="block text-xs font-medium mb-2">No. of Children:</label>
-						<input
-							type="number"
-							id="children"
-							name="children"
-							hx-post="/validate"
-							hx-trigger="change"
-							hx-sync="closest form:abort"
-							class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-							min="0"
-							max="10"
-							value="0"
-							placeholder="Enter No. of children"
-							style="font-size: 0.75rem"
-						/>
-						<div id="children-error" class="error-message"></div>
-					</div>
-					<div class="w-full sm:w-1/2">
-						<label for="nights" class="block text-xs font-medium mb-2">No. of Nights/Hours:</label>
-						<input
-							type="number"
-							id="nights"
-							name="nights"
-							hx-post="/validate"
-							hx-trigger="change"
-							hx-sync="closest form:abort"
-							class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-							min="1"
-							max="30"
-							value="1"
-							placeholder="Enter No. of nights/hours"
-							style="font-size: 0.75rem"
-						/>
-						<div id="nights-error" class="error-message"></div>
-					</div>
-				</div>
-				<div class="mb-4 flex flex-col sm:flex-row justify-between">
-					<div class="w-full sm:w-1/2 mr-0 sm:mr-2 mb-4 sm:mb-0">
-						<label for="first-name" class="block text-xs font-medium mb-2">First Name:</label>
-						<input
-							type="text"
-							id="first-name"
-							name="first-name"
-							hx-post="/validate"
-							hx-trigger="change"
-							hx-sync="closest form:abort"
-							class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-							placeholder="Enter first name"
-							style="font-size: 0.75rem"
-						/>
-						<div id="first-name-error" class="error-message"></div>
-					</div>
-					<div class="w-full sm:w-1/2">
-						<label for="last-name" class="block text-xs font-medium mb-2">Last Name:</label>
-						<input
-							type="text"
-							id="last-name"
-							name="last-name"
-							hx-post="/validate"
-							hx-trigger="change"
-							hx-sync="closest form:abort"
-							class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-							placeholder="Enter last name"
-							style="font-size: 0.75rem"
-						/>
-						<div id="last-name-error" class="error-message"></div>
-					</div>
-				</div>
-
-				<!-- Phone number with validation -->
-				<div class="mb-4 flex flex-col gap-2 sm:flex-row justify-between">
-					<div class="w-full sm:w-1/2 flex flex-col">
-						<label for="phone-number" class="block text-xs font-medium mb-2">Phone:</label>
-						<div class="flex">
-							<select
-								id="country-code"
-								name="country-cod"
-								class="w-20 p-2 pl-2 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-							>
-								<option value="+1" style="font-size: 0.75rem">+1 (USA)</option>
-								<option value="+91" style="font-size: 0.75rem">+91 (India)</option>
-								<option value="+44" style="font-size: 0.75rem">+44 (UK)</option>
-								<option value="+61" style="font-size: 0.75rem">+61 (Australia)</option>
-								<option value="+86" style="font-size: 0.75rem">+86 (China)</option>
-								<option value="+27" style="font-size: 0.75rem">+27 (South Africa)</option>
-								<option value="+33" style="font-size: 0.75rem">+33 (France)</option>
-							</select>
-							<input
-								type="tel"
-								id="phone-number"
-								name="phone-number"
-								hx-post="/validate"
-								hx-trigger="change"
-								hx-sync="closest form:abort"
-								class="flex-1 w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-								pattern="[0-9]{3}[-\s]?[0-9]{3}[-\s]?[0-9]{4}"
-								placeholder="Enter phone number"
-							/>
-						</div>
-						<div id="phone-number-error" class="error-message"></div>
-					</div>
-
-					<!-- Email field with validation -->
-					<div class="w-full sm:w-1/2">
-						<label for="email" class="block text-xs font-medium mb-2">Email:</label>
-						<input
-							type="email"
-							id="email"
-							name="email"
-							hx-post="/validate"
-							hx-trigger="change"
-							hx-sync="closest form:abort"
-							class="block w-full p-2 pl-10 text-sm text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-							placeholder="Enter email"
-						/>
-						<div id="email-error" class="error-message"></div>
-					</div>
-				</div>
-
-				<button
-					type="submit"
-					class="bg-orange-500 w-full hover:bg-orange-700 text-white font-bold py-4 px-8 rounded-lg text-2xl w-full sm:w-full mx-auto"
-				>
-					Book Now
-				</button>
-			</form>
-		</div>
-		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-		<script defer>
-			flatpickr('#date-range', {
-				mode: 'range',
-				dateFormat: 'Y-m-d',
-			});
-
-			document.body.addEventListener('htmx:afterRequest', function (evt) {
-				console.log('Yes', evt.detail);
-
-				if (evt.detail.pathInfo.requestPath === '/validate') {
-					const response = JSON.parse(evt.detail.xhr.response);
-					const targetId = evt.detail.elt.id;
-
-					console.log('Confirm', response.message, targetId);
-					const errorDiv = document.getElementById(targetId + '-error');
-					const input = document.getElementById(targetId);
-
-					if (response.success) {
-						errorDiv.textContent = '';
-						input.classList.add('validation-success');
-						input.classList.remove('validation-error');
-					} else {
-						errorDiv.textContent = response.message;
-						input.classList.add('validation-error');
-						input.classList.remove('validation-success');
-					}
-				} else if (evt.detail.pathInfo.requestPath === '/submit') {
-					const response = JSON.parse(evt.detail.xhr.response);
-					console.log('Submit Response:', response);
-
-					if (response.success) {
-						alert('Form submitted successfully!');
-					} else {
-						const submitErrorDiv = document.getElementById('submit-error');
-						submitErrorDiv.textContent = response.message;
-					}
-				}
-			});
-		</script>
-		<style>
-			@media (max-width: 768px) {
-				.sm\:w-1\/2 {
-					width: 45%;
-				}
-
-				.sm\:w-1\/4 {
-					width: 20%;
-				}
-
-				.sm\:p-6 {
-					padding: 1rem;
-				}
-
-				.sm\:mr-2 {
-					margin-right: 0.5rem;
-				}
-
-				.sm\:mb-4 {
-					margin-bottom: 1rem;
-				}
-
-				.sm\:text-xs {
-					font-size: 0.75rem;
-				}
-			}
-		</style>
-	</body>
 </html>

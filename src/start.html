@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
 </head>
 
-<body class="bg-gray-900 text-white min-h-screen p-6" id="app">
+<body class="bg-gray-900 text-white min-h-screen lg:p-6" id="app">
     <div class="max-w-2xl mx-auto" hx-get="/api/bookings/{{id}}" hx-trigger="load" hx-swap="innerHTML">
         <div class="animate-pulse">
             <div class="bg-gray-800 rounded-lg shadow-xl p-6">

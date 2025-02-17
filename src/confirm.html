@@ -25,35 +25,28 @@
 		<!-- Steps -->
 		<div class="bg-gray-50 border-b">
 			<div class="max-w-4xl mx-auto px-4 py-4">
-				<div class="flex justify-between items-center">
-					<div class="flex items-center">
-						<span
-							class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">1</span>
-						<span class="ml-2 text-blue-600 font-medium">Search</span>
-					</div>
-					<div class="flex-1 mx-4 border-t-2 border-blue-600"></div>
-					<div class="flex items-center">
-						<span
-							class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">2</span>
-						<span class="ml-2 text-blue-600 font-medium">Select</span>
-					</div>
-					<div class="flex-1 mx-4 border-t-2 border-blue-600"></div>
-					<div class="flex items-center">
-						<span
-							class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">3</span>
-						<span class="ml-2 text-blue-600 font-medium">Confirm</span>
-					</div>
-					<div class="flex-1 mx-4 border-t-2 border-gray-200"></div>
-					<div class="flex items-center opacity-50">
-						<span
-							class="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm">4</span>
-						<span class="ml-2 text-gray-600">Pay</span>
-					</div>
-					<div class="flex-1 mx-4 border-t-2 border-gray-200"></div>
-					<div class="flex items-center opacity-50">
-						<span
-							class="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm">5</span>
-						<span class="ml-2 text-gray-600">Done</span>
+				<!-- Steps -->
+				<div class="bg-gray-50 border-b">
+					<div class="max-w-4xl mx-auto px-2 py-3 sm:px-4 sm:py-4">
+						<div class="flex justify-between items-center">
+							<div class="flex flex-col items-center">
+								<span
+									class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs sm:text-sm">2</span>
+								<span class="mt-1 text-blue-600 text-xs sm:text-sm font-medium">Select</span>
+							</div>
+							<div class="flex-1 mx-2 sm:mx-4 border-t-2 border-blue-200"></div>
+							<div class="flex flex-col items-center">
+								<span
+									class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs sm:text-sm">3</span>
+								<span class="mt-1 text-blue-600 text-xs sm:text-sm font-medium">Confirm</span>
+							</div>
+							<div class="flex-1 mx-2 sm:mx-4 border-t-2 border-gray-200"></div>
+							<div class="flex flex-col items-center">
+								<span
+									class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-xs sm:text-sm">4</span>
+								<span class="mt-1 text-gray-600 text-xs sm:text-sm">Pay</span>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -82,11 +75,15 @@
 			</div>
 		</div>
 
-		<!-- Pay Button -->
-		<a href="/pay/{{id}}"
-			class="bg-blue-600 block w-full text-white py-3 px-5 border-none rounded w-[calc(100%-40px)] mx-5 mb-5 cursor-pointer">
-			Pay Now
-		</a>
+		<div class="p-2">
+			<!-- Pay Button -->
+			<a href="/pay/{{id}}"
+				class="bg-blue-600 block w-full text-white py-3 px-5 lg:px-5 border-none rounded w-[calc(100%-40px)] text-center lg:mx-5 mb-5 cursor-pointer">
+				Pay Now
+			</a>
+
+		</div>
+
 
 		<!-- Contact Info -->
 		<div class="bg-gray-50 p-4 text-center text-sm">
