@@ -5,6 +5,7 @@ import selectHtml from './select.html';
 import confirmHTML from './confirm.html';
 import payHtml from './pay.html';
 import Stripe from 'stripe';
+import { stepHTML } from './components/steps';
 
 
 
@@ -351,25 +352,12 @@ export default {
 
 								<!-- Steps -->
 								<div class="bg-gray-50 border-b">
-									<div class="max-w-4xl mx-auto px-2 py-3 sm:px-4 sm:py-4">
-										<div class="flex justify-between items-center">
-											<div class="flex flex-col items-center">
-												<span class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs sm:text-sm">1</span>
-												<span class="mt-1 text-blue-600 text-xs sm:text-sm font-medium">Search</span>
-											</div>
-											<div class="flex-1 mx-2 sm:mx-4 border-t-2 border-blue-200"></div>
-											<div class="flex flex-col items-center">
-												<span class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs sm:text-sm">2</span>
-												<span class="mt-1 text-blue-600 text-xs sm:text-sm font-medium">Select</span>
-											</div>
-											<div class="flex-1 mx-2 sm:mx-4 border-t-2 border-gray-200"></div>
-											<div class="flex flex-col items-center opacity-50">
-												<span class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-xs sm:text-sm">3</span>
-												<span class="mt-1 text-gray-600 text-xs sm:text-sm">Confirm</span>
-											</div>
-										</div>
-									</div>
+  <div class="max-w-4xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
+		<div class="flex items-center gap-4">
+								  ${stepHTML(1)}
 								</div>
+  </div>
+</div>
 
 								<input type="hidden" name="addons_total" id="addons_total" value="${total_amount}">
 
@@ -985,7 +973,7 @@ export default {
 								</div>
 							</div>
 
-							<div class="p-8">
+							<div class="p-4 lg:p-8 ">
 								<!-- Booking Header -->
 								<div class="flex justify-between items-center mb-8">
 									<h2 class="text-2xl font-bold text-gray-800">Booking #${bookingId}</h2>
@@ -994,6 +982,10 @@ export default {
 
 								<!-- Form Fields -->
 								<div class="space-y-6">
+								<div class="flex items-center gap-4">
+								  ${stepHTML(0)}
+								</div>
+								 
 									<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 										<div>
 											<label class="block text-sm font-semibold text-gray-700 mb-2">Booking Type</label>
@@ -1304,7 +1296,7 @@ export default {
 		}
 
 		// Handle /start/:id route
-		if (url.pathname.startsWith('/start/')) {
+		if (url.pathname.startsWith('/search/')) {
 			const id = url.pathname.split('/')[2]; // Get the ID from the URL
 
 			// Import start.html from source
@@ -1326,6 +1318,10 @@ export default {
 			let modifiedHtml = confirmHTML;
 			// Use replaceAll to replace all instances of {{id}}
 			modifiedHtml = modifiedHtml.replaceAll('{{id}}', id || 'No ID provided');
+		 // replace  {{steps}} with the stepHTML function
+			modifiedHtml = modifiedHtml.replace('{{steps}}', `<div class="flex justify-center py-2 items-center gap-4">
+								  ${stepHTML(2)}
+								</div>`);
 
 			return new Response(modifiedHtml, {
 				headers: { 'Content-Type': 'text/html' },
@@ -1340,6 +1336,9 @@ export default {
 			let modifiedHtml = payHtml;
 			// Use replaceAll to replace all instances of {{id}}
 			modifiedHtml = modifiedHtml.replaceAll('{{id}}', id || 'No ID provided');
+			modifiedHtml = modifiedHtml.replace('{{steps}}', `<div class="flex justify-center py-2 items-center gap-4">
+				${stepHTML(3)}
+			  </div>`);
 
 			return new Response(modifiedHtml, {
 				headers: { 'Content-Type': 'text/html' },
@@ -1481,12 +1480,20 @@ export default {
 				const roomId = '1'; // or get this from your data/params
 				const status = 'Pending'; // or get this from your data/params
 
+
+				 // EXTRACT start date and end date using data['date-range']
+				 const dateRange = data['date-range'] as string;
+				 const [startDate, endDate] = dateRange.split(' to ');
+				 //console log the extracted dates
+				 console.log('Start Date:', startDate);
+				 console.log('End Date:', endDate);
+
 				await env.DB.prepare(query)
 					.bind(
 						data['booking-type'],
 						data['booking-source'] || 'Website',
-						data['start-date'] || '2025-01-25',
-						data['end-date'] || '2025-01-26',
+						startDate ,
+						endDate || startDate,
 						data['date-flexibility'] === 'true',
 						data['earliest-date'] || null,
 						data['latest-date'] || null,
@@ -1506,7 +1513,7 @@ export default {
 
 				return new Response('', {
 					headers: {
-						'HX-Redirect': `/start/${bookingId}`,
+						'HX-Redirect': `/search/${bookingId}`,
 					},
 				});
 			} catch (error) {
